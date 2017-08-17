@@ -6,14 +6,15 @@
 #Set Token:
 library(plyr)
 library(HIEv)
-setToken('XJZnUZvb6NRSpazmuEKw')
+setToken(readLines("HIEv_token.txt"))
 library(reshape2)
-#library(timeDate)
+library(timeDate)
 library(plantecophys)
 library(plotBy)
 library(doBy)
 library(mailR)
 library(RColorBrewer)
+library(ggplot2)
 
 # temporary location to store files
 rm(list=ls())
@@ -31,8 +32,11 @@ dataTo<-function(){
 #Address where you want the graphs to be stored
 graphsTo<-"C:/R_QA/PACE_QAchecks/"
 
-
-
+sortit<-function(dat){
+  return(dat[order(dat$DateTime),])
+}
+#read in treatments
+trts<-read.csv("C:/autoscripts/treatments.csv",sep=",")
 
 #sD<-as.character(timeFirstDayInMonth(Sys.Date()))
 #lD<-as.character(timeLastDayInMonth(Sys.Date()))
@@ -51,11 +55,18 @@ dataTo()
 
 # Aboveground data
 S1 <- downloadTOA5("PACE_AUTO_S1_ABVGRND_R_", startDate=sD, endDate=eD)
+S1<-sortit(S1)
 S2 <- downloadTOA5("PACE_AUTO_S2_ABVGRND_R_", startDate=sD, endDate=eD)
+S2<-sortit(S2)
 S3 <- downloadTOA5("PACE_AUTO_S3_ABVGRND_R_", startDate=sD, endDate=eD)
+S3<-sortit(S3)
 S4 <- downloadTOA5("PACE_AUTO_S4_ABVGRND_R_", startDate=sD, endDate=eD)
+S4<-sortit(S4)
 S5 <- downloadTOA5("PACE_AUTO_S5_ABVGRND_R_", startDate=sD, endDate=eD)
+S5<-sortit(S5)
 S6 <- downloadTOA5("PACE_AUTO_S6_ABVGRND_R_", startDate=sD, endDate=eD)
+S6<-sortit(S6)
+
 S1$shelter<-1
 S2$shelter<-2
 S3$shelter<-3
@@ -74,13 +85,40 @@ mt1<-rbind(mt1,mt4)
 mt1<-rbind(mt1,mt5)
 mt1<-rbind(mt1,mt6)
 
+
+#heater duty cycle
+DC1<-sortit(downloadTOA5("PACE_AUTO_S1_DUTYCYCLE_R_", startDate=sD, endDate=eD))
+DC2<-sortit(downloadTOA5("PACE_AUTO_S2_DUTYCYCLE_R_", startDate=sD, endDate=eD))
+DC3<-sortit(downloadTOA5("PACE_AUTO_S3_DUTYCYCLE_R_", startDate=sD, endDate=eD))
+DC4<-sortit(downloadTOA5("PACE_AUTO_S4_DUTYCYCLE_R_", startDate=sD, endDate=eD))
+DC5<-sortit(downloadTOA5("PACE_AUTO_S5_DUTYCYCLE_R_", startDate=sD, endDate=eD))
+DC6<-sortit(downloadTOA5("PACE_AUTO_S6_DUTYCYCLE_R_", startDate=sD, endDate=eD))
+
+DC1$shelter<-1
+DC2$shelter<-1
+DC3$shelter<-1
+DC4$shelter<-1
+DC5$shelter<-1
+DC6$shelter<-1
+DC1m<-melt(DC1,id.vars=c(1,9),measure.vars=3:6)
+DC2m<-melt(DC2,id.vars=c(1,9),measure.vars=3:6)
+DC3m<-melt(DC3,id.vars=c(1,9),measure.vars=3:6)
+DC4m<-melt(DC4,id.vars=c(1,9),measure.vars=3:6)
+DC5m<-melt(DC5,id.vars=c(1,9),measure.vars=3:6)
+DC6m<-melt(DC6,id.vars=c(1,9),measure.vars=3:6)
+DC<-rbind(DC1m,DC2m)
+DC<-rbind(DC,DC3m)
+DC<-rbind(DC,DC4m)
+DC<-rbind(DC,DC5m)
+DC<-rbind(DC,DC6m)
+
 # Belowground data
-S1b <- downloadTOA5("PACE_AUTO_S1_BLWGRND_R_", startDate=sD, endDate=eD)
-S2b <- downloadTOA5("PACE_AUTO_S2_BLWGRND_R_", startDate=sD, endDate=eD)
-S3b <- downloadTOA5("PACE_AUTO_S3_BLWGRND_R_", startDate=sD, endDate=eD)
-S4b <- downloadTOA5("PACE_AUTO_S4_BLWGRND_R_", startDate=sD, endDate=eD)
-S5b <- downloadTOA5("PACE_AUTO_S5_BLWGRND_R_", startDate=sD, endDate=eD)
-S6b <- downloadTOA5("PACE_AUTO_S6_BLWGRND_R_", startDate=sD, endDate=eD)
+S1b <- sortit(downloadTOA5("PACE_AUTO_S1_BLWGRND_R_", startDate=sD, endDate=eD))
+S2b <- sortit(downloadTOA5("PACE_AUTO_S2_BLWGRND_R_", startDate=sD, endDate=eD))
+S3b <- sortit(downloadTOA5("PACE_AUTO_S3_BLWGRND_R_", startDate=sD, endDate=eD))
+S4b <- sortit(downloadTOA5("PACE_AUTO_S4_BLWGRND_R_", startDate=sD, endDate=eD))
+S5b <- sortit(downloadTOA5("PACE_AUTO_S5_BLWGRND_R_", startDate=sD, endDate=eD))
+S6b <- sortit(downloadTOA5("PACE_AUTO_S6_BLWGRND_R_", startDate=sD, endDate=eD))
 S1b$shelter<-1
 S2b$shelter<-2
 S3b$shelter<-3
@@ -98,6 +136,15 @@ VW<-rbind(VW,VW3)
 VW<-rbind(VW,VW4)
 VW<-rbind(VW,VW5)
 VW<-rbind(VW,VW6)
+VW$sensor<-as.numeric(gsub("^VW_Avg*\\.", "", VW$variable))
+VW$ID<-(VW$shelter-1)*8+trunc(VW$sensor/2+0.5,0) #plot 1-48 in which that sensor sits
+VWx<-merge(VW,trts,by="ID")
+VWx$Warm<-VWx$PLOT %in% c("3","4","5","6") #discriminate plots in the warming experiment
+lastVW<-subset(VWx,DateTime==max(VWx$DateTime))
+lastVW$trt<-interaction(lastVW$Warm,lastVW$Temp,lastVW$Rain)
+lastVW<-lastVW[order(lastVW$Warm),]
+lastVW$trt<-factor(lastVW$trt, levels=c("FALSE.Amb.Con", "FALSE.Amb.Drt", "TRUE.Amb.Con","TRUE.eT.Con","TRUE.Amb.Drt","TRUE.eT.Drt","FALSE.eT.Con","FALSE.eT.Drt"))
+
 
 ST1<-melt(S1b,id.vars=c(1,29),measure.vars=19:26)
 ST2<-melt(S2b,id.vars=c(1,29),measure.vars=19:26)
@@ -110,6 +157,10 @@ ST<-rbind(ST,ST3)
 ST<-rbind(ST,ST4)
 ST<-rbind(ST,ST5)
 ST<-rbind(ST,ST6)
+
+#irrigation data
+irr<-sortit(downloadTOA5("PACE_AUTO_ALL_IRRIG_R_", startDate=sD, endDate=eD))
+
 
 #####################################
 #            DRAW GRAPHS            #
@@ -160,7 +211,7 @@ mtext("                         -6-  ",side=3,line=0,col=6,cex=0.8)
 
 #Tair-diff
 plot(S1$AirT1_Avg-S1$AirT2~S1$DateTime,col=1,type='l',main="Air Temp Diff")
-points(S2$AirT1_Avg-S1$AirT2_Avg~S2$DateTime,type='l',col=2)
+points(S2$AirT1_Avg-S2$AirT2_Avg~S2$DateTime,type='l',col=2)
 points(S3$AirT1_Avg-S3$AirT2_Avg~S3$DateTime,type='l',col=3)
 points(S4$AirT1_Avg-S4$AirT2_Avg~S4$DateTime,type='l',col=4)
 points(S5$AirT1_Avg-S5$AirT2_Avg~S5$DateTime,type='l',col=5)
@@ -217,9 +268,9 @@ mtext("                         -6-  ",side=3,line=0,col=6,cex=0.8)
 
 plot_BodyT<-function(shltr){
   with(mt1[which(mt1$shelter==shltr & mt1$variable=="SBTemp_Avg.1."),],plot(value~DateTime,type='l',col=1,main=paste0("IR Body T S:",shltr),ylim=c(ymin,ymax),xlim=c(xmin,xmax)))
-  with(mt1[which(mt1$shelter==shltr & mt1$variable=="SBTemp_Avg.2."),],points(value~DateTime,type='l',col=2,))
-  with(mt1[which(mt1$shelter==shltr & mt1$variable=="SBTemp_Avg.3."),],points(value~DateTime,type='l',col=3,))
-  with(mt1[which(mt1$shelter==shltr & mt1$variable=="SBTemp_Avg.4."),],points(value~DateTime,type='l',col=4,))
+  with(mt1[which(mt1$shelter==shltr & mt1$variable=="SBTemp_Avg.2."),],points(value~DateTime,type='l',col=2))
+  with(mt1[which(mt1$shelter==shltr & mt1$variable=="SBTemp_Avg.3."),],points(value~DateTime,type='l',col=3))
+  with(mt1[which(mt1$shelter==shltr & mt1$variable=="SBTemp_Avg.4."),],points(value~DateTime,type='l',col=4))
   grid()
   mtext("1                ",side=2,line=2,col=1,cex=0.7)
   mtext("    2            ",side=2,line=2,col=2,cex=0.7)
@@ -237,9 +288,9 @@ for (i in 1:6) {
 
 plot_TargetT<-function(shltr){
   with(mt1[which(mt1$shelter==shltr & mt1$variable=="TargTemp_Avg.1."),],plot(value~DateTime,type='l',col=1,main=paste0("IR Targ T S:",shltr),ylim=c(ymin,ymax),xlim=c(xmin,xmax)))
-  with(mt1[which(mt1$shelter==shltr & mt1$variable=="TargTemp_Avg.2."),],points(value~DateTime,type='l',col=2,))
-  with(mt1[which(mt1$shelter==shltr & mt1$variable=="TargTemp_Avg.3."),],points(value~DateTime,type='l',col=3,))
-  with(mt1[which(mt1$shelter==shltr & mt1$variable=="TargTemp_Avg.4."),],points(value~DateTime,type='l',col=4,))
+  with(mt1[which(mt1$shelter==shltr & mt1$variable=="TargTemp_Avg.2."),],points(value~DateTime,type='l',col=2))
+  with(mt1[which(mt1$shelter==shltr & mt1$variable=="TargTemp_Avg.3."),],points(value~DateTime,type='l',col=3))
+  with(mt1[which(mt1$shelter==shltr & mt1$variable=="TargTemp_Avg.4."),],points(value~DateTime,type='l',col=4))
   grid()
   mtext("1                ",side=2,line=2,col=1,cex=0.7)
   mtext("    2            ",side=2,line=2,col=2,cex=0.7)
@@ -262,13 +313,13 @@ for (i in 1:6) {
 plot_SoilT<-function(shltr){
  
   with(ST[which(ST$shelter==shltr & ST$variable=="TSoil_Avg.1."),],plot(value~DateTime,type='l',col=1,main=paste0("Soil Temp S:",shltr),ylim=c(ymin,ymax),xlim=c(xmin,xmax)))
-  with(ST[which(ST$shelter==shltr & ST$variable=="TSoil_Avg.2."),],points(value~DateTime,type='l',col=2,))
-  with(ST[which(ST$shelter==shltr & ST$variable=="TSoil_Avg.3."),],points(value~DateTime,type='l',col=3,))
-  with(ST[which(ST$shelter==shltr & ST$variable=="TSoil_Avg.4."),],points(value~DateTime,type='l',col=4,))
-  with(ST[which(ST$shelter==shltr & ST$variable=="TSoil_Avg.5."),],points(value~DateTime,type='l',col=5,))
-  with(ST[which(ST$shelter==shltr & ST$variable=="TSoil_Avg.6."),],points(value~DateTime,type='l',col=6,))
-  with(ST[which(ST$shelter==shltr & ST$variable=="TSoil_Avg.7."),],points(value~DateTime,type='l',col=7,))
-  with(ST[which(ST$shelter==shltr & ST$variable=="TSoil_Avg.8."),],points(value~DateTime,type='l',col=8,))
+  with(ST[which(ST$shelter==shltr & ST$variable=="TSoil_Avg.2."),],points(value~DateTime,type='l',col=2))
+  with(ST[which(ST$shelter==shltr & ST$variable=="TSoil_Avg.3."),],points(value~DateTime,type='l',col=3))
+  with(ST[which(ST$shelter==shltr & ST$variable=="TSoil_Avg.4."),],points(value~DateTime,type='l',col=4))
+  with(ST[which(ST$shelter==shltr & ST$variable=="TSoil_Avg.5."),],points(value~DateTime,type='l',col=5))
+  with(ST[which(ST$shelter==shltr & ST$variable=="TSoil_Avg.6."),],points(value~DateTime,type='l',col=6))
+  with(ST[which(ST$shelter==shltr & ST$variable=="TSoil_Avg.7."),],points(value~DateTime,type='l',col=7))
+  with(ST[which(ST$shelter==shltr & ST$variable=="TSoil_Avg.8."),],points(value~DateTime,type='l',col=8))
   grid()
   
   mtext("1",side=1,line=2,col=1,cex=0.7,adj=0)
@@ -286,7 +337,98 @@ par(mfrow=c(3,2))
 for (i in 1:6) {
   plot_SoilT(i)
 }
+
+#Heater Duty Cycle
+plot_DutyCycle<-function(shltr){
+  
+  with(DC[which(DC$shelter==shltr & DC$variable=="DutyCycle_Avg.1."),],plot(value~DateTime,type='l',col=1,main=paste0("DutyCycle S:",shltr),ylim=c(-0.1,1.1),xlim=c(xmin,xmax)))
+  with(DC[which(DC$shelter==shltr & DC$variable=="DutyCycle_Avg.2."),],points(value~DateTime,type='l',col=2))
+  grid()
+  
+  mtext("1",side=1,line=2,col=1,cex=0.7,adj=0.3)
+  mtext("2",side=1,line=2,col=2,cex=0.7,adj=0.7)
+ 
+  
+}
+par(mfrow=c(3,2))
+#plot body temperatures for each shelter by plotnumber
+for (i in 1:6) {
+  plot_DutyCycle(i)
+}
+
+
+#soil water
+
+plot_VW<-function(shltr){
+  
+  with(VW[which(VW$shelter==shltr & VW$variable=="VW_Avg.1."),],plot(value~DateTime,type='l',col=1,main=paste0("VW S:",shltr),ylim=c(VWmin,VWmax),xlim=c(xmin,xmax)))
+  with(VW[which(VW$shelter==shltr & VW$variable=="VW_Avg.2."),],points(value~DateTime,type='l',col=2))
+  with(VW[which(VW$shelter==shltr & VW$variable=="VW_Avg.3."),],points(value~DateTime,type='l',col=3))
+  with(VW[which(VW$shelter==shltr & VW$variable=="VW_Avg.4."),],points(value~DateTime,type='l',col=4))
+  with(VW[which(VW$shelter==shltr & VW$variable=="VW_Avg.5."),],points(value~DateTime,type='l',col=5))
+  with(VW[which(VW$shelter==shltr & VW$variable=="VW_Avg.6."),],points(value~DateTime,type='l',col=6))
+  with(VW[which(VW$shelter==shltr & VW$variable=="VW_Avg.7."),],points(value~DateTime,type='l',col=7))
+  with(VW[which(VW$shelter==shltr & VW$variable=="VW_Avg.8."),],points(value~DateTime,type='l',col=8))
+  grid()
+  
+  mtext("1",side=1,line=2,col=1,cex=0.7,adj=0)
+  mtext("2",side=1,line=2,col=2,cex=0.7,adj=0.14)
+  mtext("3",side=1,line=2,col=3,cex=0.7,adj=0.28)
+  mtext("4",side=1,line=2,col=4,cex=0.7,adj=0.43)  
+  mtext("5",side=1,line=2,col=5,cex=0.7,adj=0.57) 
+  mtext("6",side=1,line=2,col=6,cex=0.7,adj=0.71)  
+  mtext("7",side=1,line=2,col=7,cex=0.7,adj=0.85)  
+  mtext("8",side=1,line=2,col=8,cex=0.7,adj=1)
+  
+  with(VW[which(VW$shelter==shltr & VW$variable=="VW_Avg.9."),],plot(value~DateTime,type='l',col=1,main=paste0("VW S:",shltr),ylim=c(VWmin,VWmax),xlim=c(xmin,xmax)))
+  with(VW[which(VW$shelter==shltr & VW$variable=="VW_Avg.10."),],points(value~DateTime,type='l',col=2))
+  with(VW[which(VW$shelter==shltr & VW$variable=="VW_Avg.11."),],points(value~DateTime,type='l',col=3))
+  with(VW[which(VW$shelter==shltr & VW$variable=="VW_Avg.12."),],points(value~DateTime,type='l',col=4))
+  with(VW[which(VW$shelter==shltr & VW$variable=="VW_Avg.13."),],points(value~DateTime,type='l',col=5))
+  with(VW[which(VW$shelter==shltr & VW$variable=="VW_Avg.14."),],points(value~DateTime,type='l',col=6))
+  with(VW[which(VW$shelter==shltr & VW$variable=="VW_Avg.15."),],points(value~DateTime,type='l',col=7))
+  with(VW[which(VW$shelter==shltr & VW$variable=="VW_Avg.16."),],points(value~DateTime,type='l',col=8))
+  grid()
+  
+  mtext("9",side=1,line=2,col=1,cex=0.7,adj=0)
+  mtext("10",side=1,line=2,col=2,cex=0.7,adj=0.14)
+  mtext("11",side=1,line=2,col=3,cex=0.7,adj=0.28)
+  mtext("12",side=1,line=2,col=4,cex=0.7,adj=0.43)  
+  mtext("13",side=1,line=2,col=5,cex=0.7,adj=0.57) 
+  mtext("14",side=1,line=2,col=6,cex=0.7,adj=0.71)  
+  mtext("15",side=1,line=2,col=7,cex=0.7,adj=0.85)  
+  mtext("16",side=1,line=2,col=8,cex=0.7,adj=1)
+  
+}
+par(mfrow=c(3,2))
+VWmax<-max(VW$value,na.rm=T)
+VWmin<-min(VW$value,na.rm=T)
+#plot body temperatures for each shelter by plotnumber
+for (i in 1:6) {
+  plot_VW(i)
+}
+
+qplot(trt,value,data=lastVW,geom=c("boxplot", "point"),main="VW by treatment (TRUE=warming exp)")
+
+
 dev.off()
 
 ###########################################################################################################
+##email results to interested parties
+
+#debug(send.mail)
+#undebug(send.mail)
+
+bdy<-paste("Data from PACE for ",sD," to ",eD)
+send.mail(from = "CUP.FLUX@gmail.com",
+          to = c("c.barton@westernsydney.edu.au","a.varhammar@westernsydney.edu.au","b.amiji@westernsydney.edu.au"),#"e.pendall@uws.edu.au","c.maier@uws.edu.au","a.renchon@uws.edu.au"),
+          subject = "PACE last week data",
+          body = paste("Data for ",sD," to ",eD),
+          smtp = list(host.name = "smtp.gmail.com",port = 587,user.name = "CUP.FLUX", passwd = "HIEFlux88", ssl = TRUE),
+          authenticate = TRUE,
+          send = TRUE,
+          attach.files = c(filenme),
+          #file.names = c("Download log.log", "Upload log.log", "DropBox File.rtf"), # optional parameter
+          #file.descriptions = c("Description for download log", "Description for upload log", "DropBox File"), # optional parameter
+          debug = FALSE)
 
