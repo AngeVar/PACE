@@ -179,7 +179,8 @@ xmin<-min(mt1$DateTime)
 
 par(mfrow=c(3,1))
 #plot battery voltages
-plot(S1$batt_volt_Min~S1$DateTime,col=1,type='l',main="Battery Voltage",ylim=c(10,15))
+plot(S1$batt_volt_Min~S1$DateTime,col=1,type='l',main="Battery Voltage",ylim=c(10,15), ylab="V", xlab="")
+axis(4, at=c(10:15), labels = c(10,"",12,"",14,""))
 points(S2$batt_volt_Min~S2$DateTime,type='l',col=2)
 points(S3$batt_volt_Min~S3$DateTime,type='l',col=3)
 points(S4$batt_volt_Min~S4$DateTime,type='l',col=4)
@@ -195,7 +196,8 @@ mtext("                         -6-  ",side=3,line=0,col=6,cex=0.8)
 
 
 #Tair
-plot(S1$AirT1_Avg~S1$DateTime,col=1,type='l',main="Air Temp",ylim=c(0,40))
+plot(S1$AirT1_Avg~S1$DateTime,col=1,type='l',main="Air Temp",ylim=c(0,40), ylab=expression(~degree~C), xlab="")
+axis(4, at=c(0,10,20,30,40), labels = c(0,"",20,"",40))
 points(S2$AirT1_Avg~S2$DateTime,type='l',col=2)
 points(S3$AirT1_Avg~S3$DateTime,type='l',col=3)
 points(S4$AirT1_Avg~S4$DateTime,type='l',col=4)
@@ -203,14 +205,15 @@ points(S5$AirT1_Avg~S5$DateTime,type='l',col=5)
 points(S6$AirT1_Avg~S6$DateTime,type='l',col=6)
 grid()
 mtext("-1-                           ",side=3,line=0,col=1,cex=0.8)
-mtext("     -2-                      ",side=3,line=0,col=2,cex=0.8)
-mtext("          -3-                 ",side=3,line=0,col=3,cex=0.8)
-mtext("               -4-            ",side=3,line=0,col=4,cex=0.8)
-mtext("                    -5-       ",side=3,line=0,col=5,cex=0.8)
-mtext("                         -6-  ",side=3,line=0,col=6,cex=0.8)
+# mtext("     -2-                      ",side=3,line=0,col=2,cex=0.8)
+# mtext("          -3-                 ",side=3,line=0,col=3,cex=0.8)
+# mtext("               -4-            ",side=3,line=0,col=4,cex=0.8)
+# mtext("                    -5-       ",side=3,line=0,col=5,cex=0.8)
+# mtext("                         -6-  ",side=3,line=0,col=6,cex=0.8)
 
 #Tair-diff
-plot(S1$AirT1_Avg-S1$AirT2~S1$DateTime,col=1,type='l',main="Air Temp Diff")
+plot(S1$AirT1_Avg-S1$AirT2~S1$DateTime,col=1,type='l',main="Air Temp Diff", ylab="T1-T2", xlab="")
+axis(4, at=c(-0.6,-0.4,-0.2,0.0,0.2,0.4,0.6), labels = c(-0.6,"",-0.2,"",0.2,"",0.6))
 points(S2$AirT1_Avg-S2$AirT2_Avg~S2$DateTime,type='l',col=2)
 points(S3$AirT1_Avg-S3$AirT2_Avg~S3$DateTime,type='l',col=3)
 points(S4$AirT1_Avg-S4$AirT2_Avg~S4$DateTime,type='l',col=4)
@@ -218,51 +221,53 @@ points(S5$AirT1_Avg-S5$AirT2_Avg~S5$DateTime,type='l',col=5)
 points(S6$AirT1_Avg-S6$AirT2_Avg~S6$DateTime,type='l',col=6)
 grid()
 mtext("-1-                           ",side=3,line=0,col=1,cex=0.8)
-mtext("     -2-                      ",side=3,line=0,col=2,cex=0.8)
-mtext("          -3-                 ",side=3,line=0,col=3,cex=0.8)
-mtext("               -4-            ",side=3,line=0,col=4,cex=0.8)
-mtext("                    -5-       ",side=3,line=0,col=5,cex=0.8)
-mtext("                         -6-  ",side=3,line=0,col=6,cex=0.8)
+#mtext("     -2-                      ",side=3,line=0,col=2,cex=0.8)
+#mtext("          -3-                 ",side=3,line=0,col=3,cex=0.8)
+#mtext("               -4-            ",side=3,line=0,col=4,cex=0.8)
+#mtext("                    -5-       ",side=3,line=0,col=5,cex=0.8)
+#mtext("                         -6-  ",side=3,line=0,col=6,cex=0.8)
 mtext(paste0(round(range(S1$AirT1_Avg-S1$AirT2_Avg)[1],1),":",round(range(S1$AirT1_Avg-S1$AirT2_Avg)[2],1)),side=1,line=2,col=1,cex=0.8,adj=0)
-mtext(paste0(round(range(S2$AirT1_Avg-S2$AirT2_Avg)[1],1),":",round(range(S2$AirT1_Avg-S2$AirT2_Avg)[2],1)),side=1,line=2,col=2,cex=0.8,adj=0.2)
-mtext(paste0(round(range(S3$AirT1_Avg-S3$AirT2_Avg)[1],1),":",round(range(S3$AirT1_Avg-S3$AirT2_Avg)[2],1)),side=1,line=2,col=3,cex=0.8,adj=0.4)
-mtext(paste0(round(range(S4$AirT1_Avg-S4$AirT2_Avg)[1],1),":",round(range(S4$AirT1_Avg-S4$AirT2_Avg)[2],1)),side=1,line=2,col=4,cex=0.8,adj=0.6)
-mtext(paste0(round(range(S5$AirT1_Avg-S5$AirT2_Avg)[1],1),":",round(range(S5$AirT1_Avg-S5$AirT2_Avg)[2],1)),side=1,line=2,col=5,cex=0.8,adj=0.8)
-mtext(paste0(round(range(S6$AirT1_Avg-S6$AirT2_Avg)[1],1),":",round(range(S6$AirT1_Avg-S6$AirT2_Avg)[2],1)),side=1,line=2,col=6,cex=0.8,adj=1)
+# mtext(paste0(round(range(S2$AirT1_Avg-S2$AirT2_Avg)[1],1),":",round(range(S2$AirT1_Avg-S2$AirT2_Avg)[2],1)),side=1,line=2,col=2,cex=0.8,adj=0.2)
+# mtext(paste0(round(range(S3$AirT1_Avg-S3$AirT2_Avg)[1],1),":",round(range(S3$AirT1_Avg-S3$AirT2_Avg)[2],1)),side=1,line=2,col=3,cex=0.8,adj=0.4)
+# mtext(paste0(round(range(S4$AirT1_Avg-S4$AirT2_Avg)[1],1),":",round(range(S4$AirT1_Avg-S4$AirT2_Avg)[2],1)),side=1,line=2,col=4,cex=0.8,adj=0.6)
+# mtext(paste0(round(range(S5$AirT1_Avg-S5$AirT2_Avg)[1],1),":",round(range(S5$AirT1_Avg-S5$AirT2_Avg)[2],1)),side=1,line=2,col=5,cex=0.8,adj=0.8)
+# mtext(paste0(round(range(S6$AirT1_Avg-S6$AirT2_Avg)[1],1),":",round(range(S6$AirT1_Avg-S6$AirT2_Avg)[2],1)),side=1,line=2,col=6,cex=0.8,adj=1)
 
 
 #PAGE 4 
 #PAR and RH
 par(mfrow=c(2,1))
 #PAR
-plot(S1$PAR_Avg~S1$DateTime,col=1,type='l',main="PAR",ylim=c(0,max(S1$PAR_Avg,S2$PAR_Avg,S3$PAR_Avg,S4$PAR_Avg,S5$PAR_Avg,S6$PAR_Avg,na.rm=T)))
+plot(S1$PAR_Avg~S1$DateTime,col=1,type='l',main="PAR",
+     ylim=c(0,max(S1$PAR_Avg,S2$PAR_Avg,S3$PAR_Avg,S4$PAR_Avg,S5$PAR_Avg,S6$PAR_Avg,na.rm=T)), 
+     ylab=expression(paste(mu,"mol",m^-2~s^-1)), xlab="")
 points(S2$PAR_Avg~S2$DateTime,type='l',col=2)
-points(S3$PAR_Avg~S3$DateTime,type='l',col=3)
-points(S4$PAR_Avg~S4$DateTime,type='l',col=4)
+#points(S3$PAR_Avg~S3$DateTime,type='l',col=3)
+#points(S4$PAR_Avg~S4$DateTime,type='l',col=4)
 points(S5$PAR_Avg~S5$DateTime,type='l',col=5)
 points(S6$PAR_Avg~S6$DateTime,type='l',col=6)
 grid()
-mtext("-1-                           ",side=3,line=0,col=1,cex=0.8)
-mtext("     -2-                      ",side=3,line=0,col=2,cex=0.8)
-mtext("          -3-                 ",side=3,line=0,col=3,cex=0.8)
-mtext("               -4-            ",side=3,line=0,col=4,cex=0.8)
-mtext("                    -5-       ",side=3,line=0,col=5,cex=0.8)
-mtext("                         -6-  ",side=3,line=0,col=6,cex=0.8)
+mtext("-1-inside                                                ",side=3,line=0,col=1,cex=0.8)
+mtext("               -2-outside                                ",side=3,line=0,col=2,cex=0.8)
+#mtext("          -3-                 ",side=3,line=0,col=3,cex=0.8)
+#mtext("               -4-            ",side=3,line=0,col=4,cex=0.8)
+mtext("                               -5-inside                ",side=3,line=0,col=5,cex=0.8)
+mtext("                                              -6-outside",side=3,line=0,col=6,cex=0.8)
 
 #RH
-plot(S1$RH_Avg~S1$DateTime,col=1,type='l',main="RH",ylim=c(0,100))
-points(S2$RH_Avg~S2$DateTime,type='l',col=2)
-points(S3$RH_Avg~S3$DateTime,type='l',col=3)
-points(S4$RH_Avg~S4$DateTime,type='l',col=4)
-points(S5$RH_Avg~S5$DateTime,type='l',col=5)
-points(S6$RH_Avg~S6$DateTime,type='l',col=6)
+plot(S1$RH_Avg~S1$DateTime,col=1,type='l',main="RH",ylim=c(0,100), xlab="", ylab="%")
+# points(S2$RH_Avg~S2$DateTime,type='l',col=2)
+# points(S3$RH_Avg~S3$DateTime,type='l',col=3)
+# points(S4$RH_Avg~S4$DateTime,type='l',col=4)
+# points(S5$RH_Avg~S5$DateTime,type='l',col=5)
+# points(S6$RH_Avg~S6$DateTime,type='l',col=6)
 grid()
 mtext("-1-                           ",side=3,line=0,col=1,cex=0.8)
-mtext("     -2-                      ",side=3,line=0,col=2,cex=0.8)
-mtext("          -3-                 ",side=3,line=0,col=3,cex=0.8)
-mtext("               -4-            ",side=3,line=0,col=4,cex=0.8)
-mtext("                    -5-       ",side=3,line=0,col=5,cex=0.8)
-mtext("                         -6-  ",side=3,line=0,col=6,cex=0.8)
+# mtext("     -2-                      ",side=3,line=0,col=2,cex=0.8)
+# mtext("          -3-                 ",side=3,line=0,col=3,cex=0.8)
+# mtext("               -4-            ",side=3,line=0,col=4,cex=0.8)
+# mtext("                    -5-       ",side=3,line=0,col=5,cex=0.8)
+# mtext("                         -6-  ",side=3,line=0,col=6,cex=0.8)
 
 
 
@@ -413,22 +418,22 @@ qplot(trt,value,data=lastVW,geom=c("boxplot", "point"),main="VW by treatment (TR
 
 dev.off()
 
-###########################################################################################################
-##email results to interested parties
-
-#debug(send.mail)
-#undebug(send.mail)
-
-bdy<-paste("Data from PACE for ",sD," to ",eD)
-send.mail(from = "CUP.FLUX@gmail.com",
-          to = c("c.barton@westernsydney.edu.au","a.varhammar@westernsydney.edu.au","b.amiji@westernsydney.edu.au"),#"e.pendall@uws.edu.au","c.maier@uws.edu.au","a.renchon@uws.edu.au"),
-          subject = "PACE last week data",
-          body = paste("Data for ",sD," to ",eD),
-          smtp = list(host.name = "smtp.gmail.com",port = 587,user.name = "CUP.FLUX", passwd = "HIEFlux88", ssl = TRUE),
-          authenticate = TRUE,
-          send = TRUE,
-          attach.files = c(filenme),
-          #file.names = c("Download log.log", "Upload log.log", "DropBox File.rtf"), # optional parameter
-          #file.descriptions = c("Description for download log", "Description for upload log", "DropBox File"), # optional parameter
-          debug = FALSE)
-
+# ###########################################################################################################
+# ##email results to interested parties
+# 
+# #debug(send.mail)
+# #undebug(send.mail)
+# 
+# bdy<-paste("Data from PACE for ",sD," to ",eD)
+# send.mail(from = "CUP.FLUX@gmail.com",
+#           to = c("c.barton@westernsydney.edu.au","a.varhammar@westernsydney.edu.au","b.amiji@westernsydney.edu.au"),#"e.pendall@uws.edu.au","c.maier@uws.edu.au","a.renchon@uws.edu.au"),
+#           subject = "PACE last week data",
+#           body = paste("Data for ",sD," to ",eD),
+#           smtp = list(host.name = "smtp.gmail.com",port = 587,user.name = "CUP.FLUX", passwd = "HIEFlux88", ssl = TRUE),
+#           authenticate = TRUE,
+#           send = TRUE,
+#           attach.files = c(filenme),
+#           #file.names = c("Download log.log", "Upload log.log", "DropBox File.rtf"), # optional parameter
+#           #file.descriptions = c("Description for download log", "Description for upload log", "DropBox File"), # optional parameter
+#           debug = FALSE)
+# 
