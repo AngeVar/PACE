@@ -161,6 +161,8 @@ ST<-rbind(ST,ST6)
 #irrigation data
 irr<-sortit(downloadTOA5("PACE_AUTO_ALL_IRRIG_R_", startDate=sD, endDate=eD))
 
+#ROS weather station data for $AirTC_Avg $PPFD_Avg
+ROS05min <- sortit(downloadTOA5("ROS_WS_Table05min_", startDate=sD, endDate=eD))
 
 #####################################
 #            DRAW GRAPHS            #
@@ -196,24 +198,26 @@ mtext("                         -6-  ",side=3,line=0,col=6,cex=0.8)
 
 
 #Tair
-plot(S1$AirT1_Avg~S1$DateTime,col=1,type='l',main="Air Temp",ylim=c(0,40), ylab=expression(~degree~C), xlab="")
-axis(4, at=c(0,10,20,30,40), labels = c(0,10,20,30,40))
+plot(S1$AirT1_Avg~S1$DateTime,col=1,type='l',main="Air Temp",ylim=c(0,35), ylab=expression(~degree~C), xlab="")
+axis(4, at=seq(0,35,by=5), labels = seq(0,35,by=5))
 points(S2$AirT1_Avg~S2$DateTime,type='l',col=2)
 points(S3$AirT1_Avg~S3$DateTime,type='l',col=3)
 points(S4$AirT1_Avg~S4$DateTime,type='l',col=4)
 points(S5$AirT1_Avg~S5$DateTime,type='l',col=5)
 points(S6$AirT1_Avg~S6$DateTime,type='l',col=6)
+points(ROS05min$AirTC_Avg~ROS05min$DateTime, type='l',col=7)
 grid()
-mtext("-1-                           ",side=3,line=0,col=1,cex=0.8)
-mtext("     -2-                      ",side=3,line=0,col=2,cex=0.8)
-mtext("          -3-                 ",side=3,line=0,col=3,cex=0.8)
-mtext("               -4-            ",side=3,line=0,col=4,cex=0.8)
-mtext("                    -5-       ",side=3,line=0,col=5,cex=0.8)
-mtext("                         -6-  ",side=3,line=0,col=6,cex=0.8)
+mtext("-1-                                  ",side=3,line=0,col=1,cex=0.8)
+mtext("     -2-                             ",side=3,line=0,col=2,cex=0.8)
+mtext("          -3-                        ",side=3,line=0,col=3,cex=0.8)
+mtext("               -4-                   ",side=3,line=0,col=4,cex=0.8)
+mtext("                    -5-              ",side=3,line=0,col=5,cex=0.8)
+mtext("                         -6-         ",side=3,line=0,col=6,cex=0.8)
+mtext("                                  ROS",side=3,line=0,col=7,cex=0.8)
 
 #Tair-diff
-plot(S1$AirT1_Avg-S1$AirT2~S1$DateTime,col=1,type='l',main="Air Temp Diff", ylab="T1-T2", xlab="", ylim=c(-1,1.5))
-axis(4, at=c(-1.0,-0.5,0.0,0.5,1.0,1.5), labels = c("-1.0","-0.5","0.0","0.5","1.0","1.5"))
+plot(S1$AirT1_Avg-S1$AirT2~S1$DateTime,col=1,type='l',main="Air Temp Diff",ylab="T1-T2",xlab="",ylim=c(-1,1.5))
+axis(4, at=seq(-1.0,1.5,by=0.5),labels=c("-1.0","-0.5","0.0","0.5","1.0","1.5"))
 points(S2$AirT1_Avg-S2$AirT2_Avg~S2$DateTime,type='l',col=2)
 points(S3$AirT1_Avg-S3$AirT2_Avg~S3$DateTime,type='l',col=3)
 points(S4$AirT1_Avg-S4$AirT2_Avg~S4$DateTime,type='l',col=4)
@@ -239,17 +243,19 @@ mtext(paste0(round(range(S6$AirT1_Avg-S6$AirT2_Avg)[1],1),":",round(range(S6$Air
 par(mfrow=c(2,1))
 #PAR
 plot(S1$PAR_Avg~S1$DateTime,col=1,type='l',main="PAR",
-     ylim=c(0,max(S1$PAR_Avg,S2$PAR_Avg,S3$PAR_Avg,S4$PAR_Avg,S5$PAR_Avg,S6$PAR_Avg,na.rm=T)),xlab="", ylab="")
+     ylim=c(0,max(S1$PAR_Avg,S2$PAR_Avg,S3$PAR_Avg,S4$PAR_Avg,S5$PAR_Avg,S6$PAR_Avg,na.rm=T)),xlab="",ylab="")
 mtext(side=2, line=2.5,text=expression(paste(mu,"mol",m^-2~s^-1)))
-axis(4, at=c(0,500,1000,1500), labels = c(0,500,1000,1500))
+axis(4, at=c(0,500,1000,1500),labels = c(0,500,1000,1500))
 points(S2$PAR_Avg~S2$DateTime,type='l',col=2)
 points(S5$PAR_Avg~S5$DateTime,type='l',col=5)
 points(S6$PAR_Avg~S6$DateTime,type='l',col=6)
+points(ROS05min$PPFD_Avg~ROS05min$DateTime,type='l',col=7)
 grid()
-mtext("1-in                                                     ",side=3,line=0,col=1,cex=0.8)
-mtext("                 2-out                                   ",side=3,line=0,col=2,cex=0.8)
-mtext("                                   5-in                  ",side=3,line=0,col=5,cex=0.8)
-mtext("                                                    6-out",side=3,line=0,col=6,cex=0.8)
+mtext("1-in                                                          ",side=3,line=0,col=1,cex=0.8)
+mtext("            2-out                                             ",side=3,line=0,col=2,cex=0.8)
+mtext("                              5-in                            ",side=3,line=0,col=5,cex=0.8)
+mtext("                                              6-out           ",side=3,line=0,col=6,cex=0.8)
+mtext("                                                           ROS",side=3,line=0,col=7,cex=0.8)
 
 #RH
 plot(S1$RH_Avg~S1$DateTime,col=1,type='l',main="RH",ylim=c(0,100), xlab="", ylab="%")
@@ -259,14 +265,15 @@ points(S3$RH_Avg~S3$DateTime,type='l',col=3)
 points(S4$RH_Avg~S4$DateTime,type='l',col=4)
 points(S5$RH_Avg~S5$DateTime,type='l',col=5)
 points(S6$RH_Avg~S6$DateTime,type='l',col=6)
+points(ROS05min$RH~ROS05min$DateTime,type='l',col=7)
 grid()
-mtext("1-out                                                                ",side=3,line=0,col=1,cex=0.8)
-mtext("             2-in                                                    ",side=3,line=0,col=2,cex=0.8)
-mtext("                         3-out                                       ",side=3,line=0,col=3,cex=0.8)
-mtext("                                      4-in                           ",side=3,line=0,col=4,cex=0.8)
-mtext("                                                  5-out              ",side=3,line=0,col=5,cex=0.8)
-mtext("                                                               6-in  ",side=3,line=0,col=6,cex=0.8)
-
+mtext("1-out                                                                         ",side=3,line=0,col=1,cex=0.8)
+mtext("             2-in                                                             ",side=3,line=0,col=2,cex=0.8)
+mtext("                         3-out                                                ",side=3,line=0,col=3,cex=0.8)
+mtext("                                      4-in                                    ",side=3,line=0,col=4,cex=0.8)
+mtext("                                                  5-out                       ",side=3,line=0,col=5,cex=0.8)
+mtext("                                                               6-in           ",side=3,line=0,col=6,cex=0.8)
+mtext("                                                                           ROS",side=3,line=0,col=7,cex=0.8)
 
 
 plot_BodyT<-function(shltr){
@@ -435,3 +442,8 @@ dev.off()
 #           #file.descriptions = c("Description for download log", "Description for upload log", "DropBox File"), # optional parameter
 #           debug = FALSE)
 # 
+# 
+# plotBy(elapsed~Date|as.factor(irr$valveNo), data=irr, legend=F) #5mm takes ~467 seconds = 7.8 min
+# grid()
+# low<-subset(irr, Date>as.Date("2017-09-01") & elapsed<250)
+# ddply(low, c("Date", "valveNo"), summarise,mean = mean(elapsed))
