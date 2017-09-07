@@ -215,6 +215,7 @@ mtext("                    -5-              ",side=3,line=0,col=5,cex=0.8)
 mtext("                         -6-         ",side=3,line=0,col=6,cex=0.8)
 mtext("                                  ROS",side=3,line=0,col=7,cex=0.8)
 
+
 #Tair-diff
 plot(S1$AirT1_Avg-S1$AirT2~S1$DateTime,col=1,type='l',main="Air Temp Diff",ylab="T1-T2",xlab="",ylim=c(-1,1.5))
 axis(4, at=seq(-1.0,1.5,by=0.5),labels=c("-1.0","-0.5","0.0","0.5","1.0","1.5"))
@@ -251,11 +252,11 @@ points(S5$PAR_Avg~S5$DateTime,type='l',col=5)
 points(S6$PAR_Avg~S6$DateTime,type='l',col=6)
 points(ROS05min$PPFD_Avg~ROS05min$DateTime,type='l',col=7)
 grid()
-mtext("1-in                                                          ",side=3,line=0,col=1,cex=0.8)
-mtext("            2-out                                             ",side=3,line=0,col=2,cex=0.8)
-mtext("                              5-in                            ",side=3,line=0,col=5,cex=0.8)
-mtext("                                              6-out           ",side=3,line=0,col=6,cex=0.8)
-mtext("                                                           ROS",side=3,line=0,col=7,cex=0.8)
+mtext("1-in                                                           ",side=3,line=0,col=1,cex=0.8)
+mtext("            2-out                                              ",side=3,line=0,col=2,cex=0.8)
+mtext("                              5-in                             ",side=3,line=0,col=5,cex=0.8)
+mtext("                                              6-out            ",side=3,line=0,col=6,cex=0.8)
+mtext("                                                            ROS",side=3,line=0,col=7,cex=0.8)
 
 #RH
 plot(S1$RH_Avg~S1$DateTime,col=1,type='l',main="RH",ylim=c(0,100), xlab="", ylab="%")
