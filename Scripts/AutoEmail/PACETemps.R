@@ -6,7 +6,7 @@
 #Set Token:
 library(plyr)
 library(HIEv)
-setToken(readLines("HIEv_token.txt"))
+setToken(readLines("C:/Repos/HIEv_token.txt"))
 library(reshape2)
 library(timeDate)
 library(plantecophys)
@@ -160,6 +160,9 @@ ST<-rbind(ST,ST6)
 
 #irrigation data
 irr<-sortit(downloadTOA5("PACE_AUTO_ALL_IRRIG_R_", startDate=sD, endDate=eD))
+
+#Windspeed data
+wind<-sortit(downloadTOA5("PACE_AUTO_ALL_WINDSPEED_R_", startDate=sD, endDate=eD))
 
 #ROS weather station data for $AirTC_Avg $PPFD_Avg
 ROS05min <- sortit(downloadTOA5("ROS_WS_Table05min_", startDate=sD, endDate=eD))
@@ -444,7 +447,13 @@ dev.off()
 #           debug = FALSE)
 # 
 # 
-# plotBy(elapsed~Date|as.factor(irr$valveNo), data=irr, legend=F) #5mm takes ~467 seconds = 7.8 min
+# plotBy(irrigrate~Date|as.factor(irr$valveNo), data=irr, legend=F) #5mm takes ~467 seconds = 7.8 min
 # grid()
 # low<-subset(irr, Date>as.Date("2017-09-01") & elapsed<250)
 # ddply(low, c("Date", "valveNo"), summarise,mean = mean(elapsed))
+# 
+# plot(WS_ms_Avg~DateTime, data=wind)
+# wind$Hour<-hour(wind$DateTime)
+# night_wind<-subset(wind, Hour <=8 | Hour >=20)
+# night1<-subset(night_wind, Date== as.Date("2017-09-18"))
+# plot(WS_ms_Avg~DateTime, data=night1)
