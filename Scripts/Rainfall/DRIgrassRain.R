@@ -26,9 +26,7 @@ dataTo()
 
 # Total biomass 
 Tmass<-read.csv("C://Repos/PACE/Data/Rainfall/DRIGrass/DRIGrass_totmass.csv")
-Tm<-Tmass[c(1:20),c(1:3)]
-Tm$Treatment<-droplevels(Tm$Treatment)
-plotBy(Totmass~Year|Treatment, data=Tm, pch=16)
+plotBy(Totmass~Date|Treatment, data=Tmass, pch=16)
 
 # Rainfall data from DRIgrass
 Rain <- downloadTOA5("MROS_AUTO_RAIN_R", startDate="2013-01-01", endDate="2017-08-31", maxnfiles=100)
@@ -38,7 +36,6 @@ Rain$Day<-day(Rain$DateTime)
 plot(Rain$Rain_mm_Tot~Rain$Date, type='h', col="blue", ylab="Rainfall (mm)", xlab="")
 
 # Irrigation data from DRIgrass
-MROS_AUTO_IRRIG
 Irrig <- downloadTOA5("MROS_AUTO_IRRIG_R", startDate="2013-01-01", endDate="2017-08-31", maxnfiles=100)
 irr<-Irrig[,c(1,5:6,10)]
 irr$Treatment <- recode(irr$currenttrt, 
@@ -57,7 +54,9 @@ irr$Day<-day(irr$DateTime)
 # Total biomass = Tmass
 # What period of rainfall/irrigation best describes the total mass production?
 
+irr_day<-summaryBy(irrigsum~Treatment+Date, data=irr, FUN=sum)
 
+plot(irrigsum.sum~Date, data=irr_day)
 
 #Testing Biomass vs. the same year's rainfall
 prec<-ddply(irr, .(Year,Treatment), summarise, Ann.Prec = sum(irrigsum), Days = length(Day))
